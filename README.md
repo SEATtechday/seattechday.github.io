@@ -1,1 +1,1 @@
-# SEATtechday.github.io
+# seat.github.io
