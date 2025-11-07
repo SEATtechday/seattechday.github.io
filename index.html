@@ -50,10 +50,10 @@
             font-size: 0.95em;
         }
         
-        /* <tr>에서 position: relative 제거 */
+        /* 📣 행(<tr>)을 기준점으로 설정 */
         tr {
+            position: relative; 
             vertical-align: top; 
-            z-index: 1; 
         }
         th, td {
             border: 1px solid #ddd;
@@ -78,13 +78,11 @@
         th:nth-child(2), td:nth-child(2) {
             width: 75%;
         }
-        /* 해설 열 (오디오 셀) */
+        /* 해설 열 */
         th:nth-child(3), td:nth-child(3) {
             width: 10%; 
             text-align: center;
             padding: 5px; 
-            position: relative; /* ⭐️ 플레이어 절대 위치를 위한 기준점 */
-            z-index: 1;
         }
         /* 짝수 행 배경색 */
         tr:nth-child(even) td {
@@ -134,29 +132,32 @@
             box-sizing: border-box;
             cursor: default; 
             display: none;
+            width: 100%; /* 폭은 동일하게 유지 */
         }
         
-        /* 활성화 상태 - '해설' 셀을 기준으로 '전시품' 열까지 확장 */
+        /* 📣 활성화 상태: 이제 오버레이가 아닌 일반 요소가 됩니다. */
         .custom-audio-player.active {
             display: flex;
-            position: absolute; 
-            top: 0; 
+            position: static; /* 오버레이 제거: 일반적인 문서 흐름을 따르도록 변경 */
             transform: none; 
-            /* height: 100%; <- JS에서 동적으로 설정하므로 제거 */
-            
-            /* 플레이어 너비를 <td> 너비(10%)의 8.5배인 850%로 설정 (전시품 + 해설 컬럼) */
-            width: 850%; 
-            /* '전시품' 컬럼의 시작점까지 왼쪽으로 이동 (10% 기준 750% 이동) */
-            left: -750%; 
-            
+            height: 50px; 
+            width: 100%; 
+            left: auto; 
+            top: auto;
             z-index: 10;
             margin: 0;
-            border-radius: 0; 
-            padding: 0 10px; 
-            box-sizing: border-box;
-            /* iOS 프로그레스바 버그 방지를 위한 하드웨어 가속 설정 */
-            transform: translateZ(0); 
         }
+        
+        /* ⭐️ NEW: 플레이어가 삽입되는 새로운 행 스타일 (n+1 행 배치) */
+        .player-row-injected td {
+            border: none;
+            padding: 0; /* 내부 패딩 제거 */
+            background-color: transparent !important; 
+        }
+        .player-row-injected .custom-audio-player {
+            border-radius: 0; /* 테이블 경계에 맞게 라운딩 제거 */
+        }
+
 
         /* 재생/일시정지 버튼 스타일 */
         .play-pause-btn {
@@ -188,7 +189,7 @@
             justify-content: center;
             margin-right: 10px; 
             
-            /* iOS 프로그레스바 버그 방지를 위한 하드웨어 가속 설정 */
+            /* ⭐️ 렌더링 컨텍스트 강화 (iOS 프로그레스바 버그 방지) */
             -webkit-transform: translateZ(0); 
             transform: translateZ(0);
         }
@@ -211,7 +212,7 @@
             background-color: #ffffff;
             transition: none; 
             
-            /* iOS 프로그레스바 문제를 해결하기 위한 하드웨어 가속 설정 */
+            /* ⭐️ iOS 프로그레스바 문제를 해결하기 위한 하드웨어 가속 설정 (핵심 수정) */
             -webkit-transform: translateZ(0); 
             transform: translateZ(0);
         }
@@ -246,14 +247,9 @@
                 font-size: 0.85em; 
             }
             
-            /* 모바일 환경에서도 비율 확장 방식 유지 */
-            .custom-audio-player.active {
-                width: 850%; 
-                left: -750%; 
-                /* height: 100%; <- JS에서 동적으로 설정하므로 제거 */
-                top: 0;
-                transform: none; 
-                padding: 0 5px; 
+            /* 📣 모바일에서 플레이어를 행의 너비에 맞춰 크게 표시 */
+            .player-row-injected .custom-audio-player {
+                 padding: 0 5px;
             }
         }
     </style>
@@ -777,7 +773,7 @@
                         <audio id="audio29" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/29.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
-                <tr>
+                 <tr>
                     <td>30</td>
                     <td>시트사업부 추가 전시품 30</td>
                     <td>
@@ -794,9 +790,12 @@
                         <audio id="audio30" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/30.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
+                <tr class="separator-row">
+                    <td colspan="3">화성공장 전시품 (No. 31~50)</td>
+                </tr>
                 <tr>
                     <td>31</td>
-                    <td>시트사업부 추가 전시품 31</td>
+                    <td>화성공장 전시품 31</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio31', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio31">
@@ -813,7 +812,7 @@
                 </tr>
                 <tr>
                     <td>32</td>
-                    <td>시트사업부 추가 전시품 32</td>
+                    <td>화성공장 전시품 32</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio32', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio32">
@@ -830,7 +829,7 @@
                 </tr>
                 <tr>
                     <td>33</td>
-                    <td>시트사업부 추가 전시품 33</td>
+                    <td>전동 슬라이딩 & 폴딩 & 리클라이닝 시스템</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio33', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio33">
@@ -844,9 +843,6 @@
                         </div>
                         <audio id="audio33" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/33.mp4" type="audio/mp4"></audio>
                     </td>
-                </tr>
-                <tr class="separator-row">
-                    <td colspan="3">연구소 전시품 (No. 34~50)</td>
                 </tr>
                 <tr>
                     <td>34</td>
@@ -901,7 +897,7 @@
                 </tr>
                 <tr>
                     <td>37</td>
-                    <td>저가형 인조가죽 개발</td>
+                    <td>천연가죽 시트커버 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio37', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio37">
@@ -918,7 +914,7 @@
                 </tr>
                 <tr>
                     <td>38</td>
-                    <td>폐페트병 재활용 시트커버 개발</td>
+                    <td>열전도성 코팅사를 이용한 통풍 시스템 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio38', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio38">
@@ -935,7 +931,7 @@
                 </tr>
                 <tr>
                     <td>39</td>
-                    <td>통풍 성능 향상 직물 개발</td>
+                    <td>재활용 소재 적용 경량화 시트백 프레임 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio39', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio39">
@@ -952,7 +948,7 @@
                 </tr>
                 <tr>
                     <td>40</td>
-                    <td>신규 직물 개발</td>
+                    <td>고기능성 차량용 매트 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio40', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio40">
@@ -969,7 +965,7 @@
                 </tr>
                 <tr>
                     <td>41</td>
-                    <td>저가형 시트커버 개발</td>
+                    <td>차세대 전장 플랫폼 시트 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio41', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio41">
@@ -1037,7 +1033,7 @@
                 </tr>
                 <tr>
                     <td>45</td>
-                    <td>모듈러 시트 개발</td>
+                    <td>시트 포지션 제어기 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio45', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio45">
@@ -1054,7 +1050,7 @@
                 </tr>
                 <tr>
                     <td>46</td>
-                    <td>전기차용 슬림 시트백 개발</td>
+                    <td>전동 리클라이너 시스템</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio46', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio46">
@@ -1071,12 +1067,24 @@
                 </tr>
                 <tr>
                     <td>47</td>
-                    <td>안전하차 시스템 (오디오 해설 없음)</td>
-                    <td></td>
+                    <td>미니밴용 3열 싱킹 시트</td>
+                    <td>
+                        <span class="audio-box" onclick="toggleCustomAudio(event, 'audio47', this)">🔊</span>
+                        <div class="custom-audio-player" data-audio-id="audio47">
+                            <div class="play-pause-btn" data-state="paused" onclick="playPauseAudio(event, 'audio47', this.closest('.custom-audio-player'))">▶</div>
+                            <div class="controls-wrapper">
+                                <div class="progress-bar-container">
+                                    <div class="progress-fill"></div>
+                                </div>
+                                <div class="time-display">00:00 / 00:00</div>
+                            </div>
+                        </div>
+                        <audio id="audio47" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/47.mp4" type="audio/mp4"></audio>
+                    </td>
                 </tr>
                 <tr>
                     <td>48</td>
-                    <td>자동 윙 아웃 헤드레스트</td>
+                    <td>친환경 PU 인조가죽 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio48', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio48">
@@ -1093,7 +1101,7 @@
                 </tr>
                 <tr>
                     <td>49</td>
-                    <td>헤드레스트 유틸리티 바</td>
+                    <td>경량화 PU 인조가죽 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio49', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio49">
@@ -1114,7 +1122,7 @@
                     <td></td>
                 </tr>
                 <tr class="separator-row">
-                    <td colspan="3">화성공장 전시품 (No. 51~66)</td>
+                    <td colspan="3">창원공장 전시품 (No. 51~66)</td>
                 </tr>
                 <tr>
                     <td>51</td>
@@ -1169,7 +1177,7 @@
                 </tr>
                 <tr>
                     <td>54</td>
-                    <td>친환경 PU 인조가죽 개발</td>
+                    <td>창원공장 전시품 54</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio54', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio54">
@@ -1186,7 +1194,7 @@
                 </tr>
                 <tr>
                     <td>55</td>
-                    <td>리사이클 천연가죽 개발</td>
+                    <td>창원공장 전시품 55</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio55', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio55">
@@ -1203,7 +1211,7 @@
                 </tr>
                 <tr>
                     <td>56</td>
-                    <td>프리미엄 천연가죽 개발</td>
+                    <td>창원공장 전시품 56</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio56', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio56">
@@ -1220,7 +1228,7 @@
                 </tr>
                 <tr>
                     <td>57</td>
-                    <td>가죽시트 냄새 개선 공정 기술 개발</td>
+                    <td>창원공장 전시품 57</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio57', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio57">
@@ -1237,7 +1245,7 @@
                 </tr>
                 <tr>
                     <td>58</td>
-                    <td>오염 방지 PU 인조가죽 개발</td>
+                    <td>창원공장 전시품 58</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio58', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio58">
@@ -1305,7 +1313,7 @@
                 </tr>
                 <tr>
                     <td>62</td>
-                    <td>전동 헤드레스트 개발</td>
+                    <td>창원공장 전시품 62</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio62', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio62">
@@ -1322,7 +1330,7 @@
                 </tr>
                 <tr>
                     <td>63</td>
-                    <td>통합 전자식 럼버 서포트 시스템</td>
+                    <td>창원공장 전시품 63</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio63', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio63">
@@ -1339,7 +1347,7 @@
                 </tr>
                 <tr>
                     <td>64</td>
-                    <td>전기차용 에코 시트</td>
+                    <td>창원공장 전시품 64</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio64', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio64">
@@ -1356,7 +1364,7 @@
                 </tr>
                 <tr>
                     <td>65</td>
-                    <td>통합 통풍/냉난방 시스템</td>
+                    <td>창원공장 전시품 65</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio65', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio65">
@@ -1373,7 +1381,7 @@
                 </tr>
                 <tr>
                     <td>66</td>
-                    <td>안티 윙클 시트 개발</td>
+                    <td>창원공장 전시품 66</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio66', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio66">
@@ -1390,7 +1398,7 @@
                 </tr>
                 <tr>
                     <td>67</td>
-                    <td>추가 전시품 67 (화성공장)</td>
+                    <td>추가 전시품 67 (창원공장)</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio67', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio67">
@@ -1410,11 +1418,15 @@
     </div>
 
     <script>
+        // ⭐️ NEW GLOBAL STATE: 주입된 플레이어 행과 원래 🔊 버튼 요소를 추적
+        let injectedPlayerRow = null; 
+        let originalAudioBox = null;
+
         // 현재 활성화된 오디오 및 플레이어 상태를 추적하는 변수
         let currentlyActiveAudio = null;
         let updateIntervals = {}; // 각 오디오 ID별로 setInterval ID를 저장
         let isSeeking = false; // 드래그 탐색 중인지 여부
-        let activePlayer = null; // 현재 탐색 중인 플레이어 (드래그용)
+        let activePlayer = null; // 현재 탐색 중인 플레이어 (드래그용, 주입된 플레이어 요소)
 
         // 1. 시간 포맷 변환 함수
         function formatTime(seconds) {
@@ -1426,108 +1438,94 @@
             return `${paddedMinutes}:${paddedSeconds}`;
         }
 
-        // 2. 플레이어 UI 초기화 함수
-        function resetPlayer(audio, playerElement) {
-            // 인터벌 중지
-            stopProgressUpdate(audio.id);
-
-            // 오디오 중지 및 초기화 (요청사항 2: 음성 일시정지)
-            audio.pause();
-            audio.currentTime = 0;
-
-            // UI 초기화
-            const btn = playerElement.querySelector('.play-pause-btn');
-            const fill = playerElement.querySelector('.progress-fill');
-            const timeDisplay = playerElement.querySelector('.time-display');
-            const audioBox = playerElement.previousElementSibling; // 🔊 버튼
-
-            btn.textContent = '▶';
-            btn.classList.remove('playing');
-            btn.dataset.state = 'paused';
-            
-            // ⭐️ 요청사항 2: 플레이어 최소화 및 인라인 높이 스타일 초기화
-            playerElement.style.height = ''; // 인라인으로 설정된 높이를 제거하여 CSS 기본값(50px)으로 복귀
-            playerElement.classList.remove('active');
-            
-            if (audioBox && audioBox.classList.contains('audio-box')) {
-                audioBox.classList.remove('hidden'); // 🔊 버튼 다시 표시 (요청사항 2: 히든된게 다시 나타났으면)
-            }
-
-            fill.style.width = '0%';
-            
-            timeDisplay.textContent = '00:00 / 00:00'; 
-            
-            currentlyActiveAudio = null;
-        }
-
-        // 3. 진행 업데이트 시작/중지
-        function startProgressUpdate(audioId, playerElement) {
-            stopProgressUpdate(audioId); // 기존 인터벌이 있다면 중지
-
-            const audio = document.getElementById(audioId);
-            const fill = playerElement.querySelector('.progress-fill');
-            const timeDisplay = playerElement.querySelector('.time-display');
-            let duration = audio.duration;
-
-            if (!isFinite(duration) || duration === 0) {
-                 // durationchange 이벤트 리스너를 한 번만 연결하여 로딩 후 업데이트
-                audio.addEventListener('loadedmetadata', function updateDuration() {
-                    duration = audio.duration; // 로드 후 duration 업데이트
-                    if (isFinite(duration) && duration > 0) {
-                        timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(duration)}`;
-                        startProgressUpdate(audioId, playerElement);
-                    }
-                    audio.removeEventListener('loadedmetadata', updateDuration);
-                });
-                return;
-            }
-
-            // 초기 시간 표시
-            timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(duration)}`;
-
-            // 100ms마다 업데이트
-            updateIntervals[audioId] = setInterval(() => {
-                // 오디오가 일시정지 상태라면 프로그레스바 업데이트를 중단합니다.
-                if (audio.paused) {
-                    stopProgressUpdate(audioId);
-                    return;
-                }
-                
-                if (!isSeeking) {
-                    const progress = (audio.currentTime / duration) * 100;
-                    fill.style.width = `${progress}%`;
-                    timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(duration)}`;
-
-                    // 재생 완료 처리
-                    if (audio.currentTime >= duration) {
-                        resetPlayer(audio, playerElement);
-                    }
-                }
-            }, 100);
-        }
-
+        // 2-1. 진행 바 업데이트 타이머 중지
         function stopProgressUpdate(audioId) {
             if (updateIntervals[audioId]) {
                 clearInterval(updateIntervals[audioId]);
                 delete updateIntervals[audioId];
             }
         }
-
-        // 4. 재생/일시정지 버튼 클릭 처리
-        function playPauseAudio(event, audioId, playerElement) {
-            if (event) {
-                event.stopPropagation(); // 테이블 행 클릭 이벤트 방지
-            }
+        
+        // 2-2. 시간 표시 업데이트 및 진행 바 채움
+        function updateTimeDisplay(audio, playerElement) {
+            if (!playerElement || !audio) return;
             
+            const progressFill = playerElement.querySelector('.progress-fill');
+            const timeDisplay = playerElement.querySelector('.time-display');
+            
+            if (isFinite(audio.duration) && audio.duration > 0) {
+                const percentage = (audio.currentTime / audio.duration) * 100;
+                progressFill.style.width = percentage + '%';
+                timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+            } else {
+                progressFill.style.width = '0%';
+                timeDisplay.textContent = `00:00 / ${formatTime(audio.duration)}`; 
+            }
+        }
+
+        // 2-3. 진행 바 업데이트 타이머 시작
+        function startProgressUpdate(audioId, playerElement) {
+            stopProgressUpdate(audioId); // 기존 타이머 중지
             const audio = document.getElementById(audioId);
             const btn = playerElement.querySelector('.play-pause-btn');
 
-            // 4-1. 다른 오디오가 재생 중이라면 중지 및 초기화
+            updateIntervals[audioId] = setInterval(() => {
+                updateTimeDisplay(audio, playerElement);
+
+                // 재생이 끝났을 경우 처리
+                if (audio.ended) {
+                    resetPlayer(audio, document.querySelector(`.custom-audio-player[data-audio-id="${audioId}"]`));
+                }
+            }, 500);
+        }
+
+        // 3. 플레이어 UI 초기화 및 숨기기 함수 (Modified for injected row)
+        // originalPlayerElement는 주입된 플레이어의 템플릿 역할을 하는 DOM 요소입니다.
+        function resetPlayer(audio, originalPlayerElement) {
+            // 1. 오디오 정지 및 UI 초기화
+            audio.pause();
+            audio.currentTime = 0;
+            stopProgressUpdate(audio.id);
+            
+            // 2. 원본 플레이어 UI 템플릿 초기화 (활성화 클래스 제거)
+            originalPlayerElement.classList.remove('active');
+            originalPlayerElement.style.display = 'none';
+
+            // 3. 주입된 플레이어 행 제거 및 🔊 버튼 표시
+            if (injectedPlayerRow) {
+                // 주입된 행에서 모든 이벤트 리스너 제거 (특히 seek)
+                const progressBarContainer = injectedPlayerRow.querySelector('.progress-bar-container');
+                if (progressBarContainer) {
+                     progressBarContainer.removeEventListener('mousedown', handleSeekStart);
+                     progressBarContainer.removeEventListener('touchstart', handleSeekStart);
+                }
+                
+                injectedPlayerRow.remove();
+                injectedPlayerRow = null;
+            }
+            if (originalAudioBox) {
+                originalAudioBox.classList.remove('hidden');
+                originalAudioBox = null;
+            }
+            
+            // 4. 상태 변수 초기화
+            currentlyActiveAudio = null;
+            isSeeking = false;
+            activePlayer = null;
+        }
+
+        // 4. 재생/일시정지 버튼 클릭 처리 (playerElement는 주입된 복제 요소임)
+        function playPauseAudio(event, audioId, playerElement) {
+            if (event) { event.stopPropagation(); } // 테이블 행 클릭 이벤트 방지
+            const audio = document.getElementById(audioId);
+            const btn = playerElement.querySelector('.play-pause-btn');
+            
+            // 4-1. 다른 오디오가 재생 중이라면 중지 및 초기화 (safety check)
             if (currentlyActiveAudio && currentlyActiveAudio.id !== audioId) {
                 const prevAudio = currentlyActiveAudio;
-                let prevPlayer = prevAudio.closest('.custom-audio-player');
-                if (prevPlayer) {
-                    resetPlayer(prevAudio, prevPlayer);
+                const originalPrevPlayer = document.querySelector(`.custom-audio-player[data-audio-id="${prevAudio.id}"]`);
+                if (originalPrevPlayer) {
+                    resetPlayer(prevAudio, originalPrevPlayer); 
                 }
             }
             currentlyActiveAudio = audio;
@@ -1538,10 +1536,8 @@
                     btn.textContent = '⏸';
                     btn.classList.add('playing');
                     btn.dataset.state = 'playing';
-                    // duration이 로드된 후 업데이트 시작
                     startProgressUpdate(audioId, playerElement);
                 }).catch(error => {
-                    // 재생 실패 시 UI 상태도 일시 정지로 유지
                     console.warn("Audio playback failed:", error);
                     btn.textContent = '▶';
                     btn.classList.remove('playing');
@@ -1553,92 +1549,116 @@
                 btn.textContent = '▶';
                 btn.classList.remove('playing');
                 btn.dataset.state = 'paused';
-                // 일시 정지 시 타이머 중지
                 stopProgressUpdate(audioId);
             }
         }
 
-        // 5. 해설(🔊) 아이콘 클릭 시 커스텀 플레이어 토글 함수
+        // 5. 해설(🔊) 아이콘 클릭 시 커스텀 플레이어 토글 함수 (Major modification for n+1 row)
         function toggleCustomAudio(event, audioId, boxElement) {
-            if (event) {
-                event.stopPropagation();
-            }
+            if (event) { event.stopPropagation(); }
             
             const audioToActivate = document.getElementById(audioId);
-            const playerToActivate = boxElement.nextElementSibling;
-            const currentTR = boxElement.closest('tr'); // ⭐️ 현재 TR 요소
-            const nextTR = currentTR.nextElementSibling; // ⭐️ 다음 TR 요소
-            
-            // 5-1. 이미 다른 플레이어가 활성화된 경우: 모두 정리
+            const playerTemplate = boxElement.nextElementSibling; 
+            const clickedRow = boxElement.closest('tr');
+
+            // 5-1. 다른 오디오가 활성화된 경우 정리
             if (currentlyActiveAudio && currentlyActiveAudio.id !== audioId) {
                 const prevAudio = currentlyActiveAudio;
-                let prevPlayer = prevAudio.closest('.custom-audio-player');
-                if (prevPlayer) {
-                    resetPlayer(prevAudio, prevPlayer);
+                const originalPrevPlayer = document.querySelector(`.custom-audio-player[data-audio-id="${prevAudio.id}"]`);
+                if (originalPrevPlayer) {
+                    resetPlayer(prevAudio, originalPrevPlayer);
                 }
             }
-
-            // 5-2. 현재 클릭된 오디오가 이미 활성화된 상태인지 확인
-            if (playerToActivate.classList.contains('active')) {
-                // 닫기
-                resetPlayer(audioToActivate, playerToActivate);
-            } else {
-                // 활성화
-                playerToActivate.classList.add('active');
-                boxElement.classList.add('hidden'); // 🔊 버튼 숨기기
-                currentlyActiveAudio = audioToActivate;
-
-                // ⭐️ 요청사항 1: 높이 계산 및 적용 (현재 TR + 다음 TR)
-                let totalHeight = currentTR.offsetHeight;
-                
-                // 다음 TR이 있고, 구분선(`separator-row`)이 아니라면 다음 TR의 높이를 더함
-                if (nextTR && !nextTR.classList.contains('separator-row')) {
-                    totalHeight += nextTR.offsetHeight;
-                } 
-                
-                // 인라인 스타일로 높이 설정
-                playerToActivate.style.height = `${totalHeight}px`;
-
-                // 오디오 로드를 강제하여 안드로이드 환경의 안정성을 높입니다.
-                audioToActivate.load(); 
-
-                // 활성화 후 바로 재생 시도
-                playPauseAudio(null, audioId, playerToActivate); 
+            
+            // 5-2. 현재 클릭된 오디오가 이미 활성화된 상태인지 확인 (재클릭 = 닫기)
+            if (currentlyActiveAudio === audioToActivate && injectedPlayerRow) {
+                resetPlayer(audioToActivate, playerTemplate); 
+                return;
             }
+            
+            // 5-3. 활성화 (Inject the player into the next row)
+            
+            // a. 기존 주입된 행 정리 (새로운 행을 삽입하기 전에 안전하게 제거)
+            if (injectedPlayerRow) {
+                injectedPlayerRow.remove();
+                injectedPlayerRow = null;
+            }
+            
+            // b. 새 플레이어 행 생성
+            const newRow = document.createElement('tr');
+            newRow.classList.add('player-row-injected'); // NEW CSS class
+            const newCell = document.createElement('td');
+            newCell.setAttribute('colspan', '3'); // 전체 너비 확보
+            
+            // c. 플레이어 UI 복제 및 활성화
+            const activePlayerUI = playerTemplate.cloneNode(true); 
+            activePlayerUI.classList.add('active');
+            activePlayerUI.style.display = 'flex'; 
+
+            // d. 복제된 UI에 이벤트 리스너 재연결
+            const playPauseBtn = activePlayerUI.querySelector('.play-pause-btn');
+            playPauseBtn.onclick = (e) => playPauseAudio(e, audioId, activePlayerUI);
+            
+            const progressBarContainer = activePlayerUI.querySelector('.progress-bar-container');
+            // 드래그/터치 탐색 리스너 연결
+            progressBarContainer.addEventListener('mousedown', handleSeekStart);
+            progressBarContainer.addEventListener('touchstart', handleSeekStart, { passive: false });
+            
+            // e. UI 구성 및 삽입
+            newCell.appendChild(activePlayerUI);
+            newRow.appendChild(newCell);
+            
+            // f. 클릭된 행 다음에 삽입 (n+1 행에 표시)
+            clickedRow.parentNode.insertBefore(newRow, clickedRow.nextSibling);
+            injectedPlayerRow = newRow; 
+            
+            // g. 원본 🔊 아이콘 숨기기
+            boxElement.classList.add('hidden');
+            originalAudioBox = boxElement; 
+
+            // h. 현재 오디오 업데이트 및 자동 재생
+            currentlyActiveAudio = audioToActivate;
+            updateTimeDisplay(audioToActivate, activePlayerUI); 
+            playPauseAudio(null, audioId, activePlayerUI); 
         }
 
-        // 6. 플레이어 외부 클릭 시 닫기 (요청사항 2)
+        // 6. 플레이어 외부 터치/클릭 시 동작 (Request 2)
         function handleOutsideClick(event) {
-            if (!currentlyActiveAudio) return;
-
-            let target = event.target;
+            let target = event.target; 
             let isInsidePlayer = false;
-
-            // 클릭된 요소가 플레이어 내부인지 확인
+            
+            // 1. 클릭된 요소가 플레이어 내부 (주입된 행 또는 원래 🔊 버튼의 <tr>)인지 확인
             while (target && target !== document.body) {
-                if (target.classList && (target.classList.contains('custom-audio-player') || target.classList.contains('audio-box'))) {
-                    isInsidePlayer = true;
-                    break;
+                if (injectedPlayerRow && target === injectedPlayerRow) {
+                     isInsidePlayer = true;
+                     break;
                 }
+                // 원래 🔊 버튼이 있는 <tr> 클릭도 내부 상호작용으로 간주
+                if (originalAudioBox && target.closest('tr') === originalAudioBox.closest('tr')) {
+                     isInsidePlayer = true;
+                     break;
+                }
+                
                 target = target.parentNode;
             }
 
-            // 플레이어 외부를 클릭했고, 현재 탐색 중이 아니라면 플레이어 닫기
-            if (!isInsidePlayer && !isSeeking) {
-                const playerElement = currentlyActiveAudio.closest('.custom-audio-player');
-                if (playerElement) {
-                    // resetPlayer는 오디오 일시정지, 플레이어 최소화, 🔊 아이콘 다시 표시를 모두 처리합니다.
-                    resetPlayer(currentlyActiveAudio, playerElement);
+            // 2. 플레이어 외부를 클릭했고, 현재 탐색 중이 아니며, 활성화된 오디오가 있다면 닫기
+            if (!isInsidePlayer && !isSeeking && currentlyActiveAudio) {
+                const audioToPause = currentlyActiveAudio;
+                const originalPlayerElement = document.querySelector(`.custom-audio-player[data-audio-id="${audioToPause.id}"]`);
+                
+                if (originalPlayerElement) {
+                    resetPlayer(audioToPause, originalPlayerElement);
                 }
             }
         }
-
+        
         // --- 7. 드래그를 통한 재생 위치 이동 기능 (터치 포함) ---
+        
         // 탐색 위치를 계산하고 오디오 및 UI에 반영
         function setSeekTime(event, progressBarContainer, audio) {
             const rect = progressBarContainer.getBoundingClientRect();
             const clientX = event.touches ? event.touches[0].clientX : event.clientX;
-            
             let seekPosition = (clientX - rect.left) / rect.width;
             seekPosition = Math.max(0, Math.min(1, seekPosition));
             
@@ -1648,89 +1668,83 @@
             if (isFinite(audio.duration) && audio.duration > 0) {
                 const seekTime = seekPosition * audio.duration;
                 
-                // 끝났을 때만 실제 시간 적용
-                if (event.type === 'mouseup' || event.type === 'touchend') {
-                    audio.currentTime = seekTime;
+                // 드래그 중에는 UI만 실시간으로 업데이트
+                if (event.type === 'mousemove' || event.type === 'touchmove') {
+                    progressFill.style.width = seekPosition * 100 + '%';
+                    timeDisplay.textContent = `${formatTime(seekTime)} / ${formatTime(audio.duration)}`;
                 }
                 
-                // UI는 실시간으로 업데이트
-                progressFill.style.width = `${seekPosition * 100}%`;
-                timeDisplay.textContent = `${formatTime(seekTime)} / ${formatTime(audio.duration)}`;
+                // 드래그 종료 시 실제 오디오 currentTime 업데이트 및 재생
+                if (event.type === 'mouseup' || event.type === 'touchend') {
+                    audio.currentTime = seekTime;
+                    
+                    // 정지 상태였다면 재생 시작
+                    if (audio.paused) {
+                        const btn = activePlayer.querySelector('.play-pause-btn');
+                        audio.play().then(() => {
+                            btn.textContent = '⏸';
+                            btn.classList.add('playing');
+                            btn.dataset.state = 'playing';
+                            startProgressUpdate(audio.id, activePlayer); 
+                        }).catch(error => {
+                            console.warn("Playback failed after seeking:", error);
+                        });
+                    } else {
+                         // 재생 중이었다면 진행 업데이트 재시작
+                        startProgressUpdate(audio.id, activePlayer);
+                    }
+                }
             }
         }
-
-        // 드래그 시작 핸들러
+        
+        // 7-1. 드래그 시작 처리 함수
         function handleSeekStart(event) {
-            if (event.target.classList.contains('play-pause-btn')) return;
-            
-            event.stopPropagation();
+            event.preventDefault(); 
             isSeeking = true;
-
-            const progressBarContainer = event.currentTarget;
-            activePlayer = progressBarContainer.closest('.custom-audio-player');
-            const audioId = activePlayer.dataset.audioId;
-            const audio = document.getElementById(audioId);
-
-            if (!audio || !isFinite(audio.duration) || audio.duration === 0) {
-                isSeeking = false;
-                return;
-            }
-
-            // 드래그 시작 시 업데이트 중지
-            stopProgressUpdate(audioId);
             
-            // 마우스 이동/해제 리스너 연결
+            const progressBarContainer = event.currentTarget;
+            const audio = currentlyActiveAudio;
+            
+            // 현재 활성화된 플레이어를 설정 (복제된 요소)
+            activePlayer = progressBarContainer.closest('.custom-audio-player'); 
+
+            // 드래그 시작 시 업데이트 일시 중지
+            stopProgressUpdate(audio.id);
+            
+            // 드래그/터치 이동 및 종료 이벤트 리스너를 문서에 추가
             document.addEventListener('mousemove', handleSeekMove);
             document.addEventListener('mouseup', handleSeekEnd);
             document.addEventListener('touchmove', handleSeekMove, { passive: false });
             document.addEventListener('touchend', handleSeekEnd);
-
-            // 초기 클릭 위치로 한 번 업데이트
-            setSeekTime(event, progressBarContainer, audio);
-        }
-
-        // 드래그 이동 핸들러
-        function handleSeekMove(event) {
-            if (!isSeeking || !activePlayer) return;
             
-            // 터치 이벤트에서 스크롤을 막습니다 (모바일에서 매우 중요)
-            if (event.cancelable && (event.type === 'touchmove' || event.type === 'touchstart')) {
-                 event.preventDefault(); 
-            }
-
-            const progressBarContainer = activePlayer.querySelector('.progress-bar-container');
-            const audioId = activePlayer.dataset.audioId;
-            const audio = document.getElementById(audioId);
-
+            // 시작 위치 설정 (클릭/터치 시 바로 재생 위치 업데이트)
             setSeekTime(event, progressBarContainer, audio);
         }
 
-        // 드래그 종료 핸들러
+        // 7-2. 드래그 이동 처리 함수
+        function handleSeekMove(event) {
+            if (!isSeeking || !currentlyActiveAudio || !activePlayer) return;
+            // progress-bar-container를 찾아 setSeekTime 호출
+            const progressBarContainer = activePlayer.querySelector('.progress-bar-container');
+            setSeekTime(event, progressBarContainer, currentlyActiveAudio);
+        }
+        
+        // 7-3. 드래그 종료 처리 함수
         function handleSeekEnd(event) {
-            if (!isSeeking || !activePlayer) return;
+            if (!isSeeking || !currentlyActiveAudio || !activePlayer) return;
 
             isSeeking = false;
-            event.stopPropagation();
-
+            const audio = currentlyActiveAudio;
             const progressBarContainer = activePlayer.querySelector('.progress-bar-container');
-            const audioId = activePlayer.dataset.audioId;
-            const audio = document.getElementById(audioId);
 
-            // 최종 위치로 오디오 시간 업데이트
-            setSeekTime(event, progressBarContainer, audio);
+            // 최종 위치 설정 및 오디오 currentTime 반영
+            setSeekTime(event, progressBarContainer, audio); 
 
-            // 일시정지 상태였다면 재생 버튼으로 상태 유지
-            const btn = activePlayer.querySelector('.play-pause-btn');
-            if (btn.dataset.state === 'playing') {
-                audio.play(); 
-            } else {
-                 // 일시정지 상태 유지
-                audio.pause(); 
+            // 인터벌 재시작 (재생 중일 경우)
+            if (!audio.paused) {
+                startProgressUpdate(audio.id, activePlayer);
             }
-
-            // 인터벌 재시작
-            startProgressUpdate(audio.id, activePlayer);
-
+            
             // 이벤트 리스너 정리
             document.removeEventListener('mousemove', handleSeekMove);
             document.removeEventListener('mouseup', handleSeekEnd);
@@ -1739,18 +1753,42 @@
             activePlayer = null;
         }
 
-        // 페이지 로드 후 모든 리스너 연결
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.progress-bar-container').forEach(container => {
-                container.addEventListener('mousedown', handleSeekStart);
-                container.addEventListener('touchstart', handleSeekStart, { passive: false });
+        // 8. 오디오 컨텍스트 활성화 (iOS/Safari)
+        function wakeUpAudioContext() {
+            const allAudio = document.querySelectorAll('audio');
+            let playedSuccessfully = false;
+            allAudio.forEach(audio => {
+                // duration이 로드되지 않은 오디오만 시도
+                if (audio.readyState < 1 || isNaN(audio.duration)) {
+                    // 메타데이터 로드를 강제하기 위해 play/pause를 시도
+                    audio.load();
+                    audio.play().then(() => {
+                        audio.pause(); 
+                        playedSuccessfully = true;
+                    }).catch(error => {
+                        // console.warn(`Audio ${audio.id} context activation attempted.`, error.message);
+                    });
+                }
             });
             
+            // 한 번이라도 성공했거나, 시도를 마쳤다면 리스너 제거
+            if (playedSuccessfully) {
+                 document.removeEventListener('touchstart', wakeUpAudioContext);
+                 document.removeEventListener('click', wakeUpAudioContext);
+            }
+        }
+
+
+        // 페이지 로드 후 모든 리스너 연결 (수정됨: seek 리스너는 동적 요소에 개별적으로 연결)
+        document.addEventListener('DOMContentLoaded', () => {
             // 문서 전체에 클릭/터치 리스너 연결 (플레이어 외부 클릭 감지)
             document.addEventListener('click', handleOutsideClick); 
             document.addEventListener('touchend', handleOutsideClick); 
         });
 
+        // 문서 로드 후, 첫 터치(모바일) 또는 클릭(PC)에 리스너를 붙여 오디오 컨텍스트를 깨웁니다.
+        document.addEventListener('touchstart', wakeUpAudioContext, { once: true });
+        document.addEventListener('click', wakeUpAudioContext, { once: true });
     </script>
 </body>
 </html>
