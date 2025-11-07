@@ -50,10 +50,10 @@
             font-size: 0.95em;
         }
         
-        /* 📣 행(<tr>)을 기준점으로 설정 */
+        /* 📣 행(<tr>)을 기준점으로 설정 (플레이어 위치 오류 해결 핵심) */
         tr {
-            position: relative; 
-            vertical-align: top; 
+            position: relative; /* 자식 요소인 플레이어의 절대 위치 기준점 */
+            vertical-align: top; /* 높이 계산 안정화 */
         }
         th, td {
             border: 1px solid #ddd;
@@ -132,32 +132,19 @@
             box-sizing: border-box;
             cursor: default; 
             display: none;
-            width: 100%; /* 폭은 동일하게 유지 */
         }
         
-        /* 📣 활성화 상태: 이제 오버레이가 아닌 일반 요소가 됩니다. */
+        /* 📣 활성화 상태: 해당 <tr>의 전체 영역을 덮도록 설정 (위치 오류 해결 핵심) */
         .custom-audio-player.active {
             display: flex;
-            position: static; /* 오버레이 제거: 일반적인 문서 흐름을 따르도록 변경 */
+            position: absolute; 
+            top: 0; 
             transform: none; 
-            height: 50px; 
+            height: 100%; /* <tr> 높이 전체를 덮도록 설정 */
             width: 100%; 
-            left: auto; 
-            top: auto;
+            left: 0; 
             z-index: 10;
-            margin: 0;
         }
-        
-        /* ⭐️ NEW: 플레이어가 삽입되는 새로운 행 스타일 (n+1 행 배치) */
-        .player-row-injected td {
-            border: none;
-            padding: 0; /* 내부 패딩 제거 */
-            background-color: transparent !important; 
-        }
-        .player-row-injected .custom-audio-player {
-            border-radius: 0; /* 테이블 경계에 맞게 라운딩 제거 */
-        }
-
 
         /* 재생/일시정지 버튼 스타일 */
         .play-pause-btn {
@@ -248,8 +235,15 @@
             }
             
             /* 📣 모바일에서 플레이어를 행의 너비에 맞춰 크게 표시 */
-            .player-row-injected .custom-audio-player {
-                 padding: 0 5px;
+            .custom-audio-player.active {
+                height: 100%; 
+                width: 100%; 
+                left: 0; 
+                right: auto; 
+                margin-left: 0; 
+                top: 0;
+                transform: none; 
+                padding: 0 5px; 
             }
         }
     </style>
@@ -294,7 +288,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio1" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/1.mp4" type="audio/mp4"></audio>
+                        <audio id="audio1" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/1.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -311,7 +305,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio2" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/2.mp4" type="audio/mp4"></audio>
+                        <audio id="audio2" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/2.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -328,7 +322,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio3" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/3.mp4" type="audio/mp4"></audio>
+                        <audio id="audio3" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/3.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -345,7 +339,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio4" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/4.mp4" type="audio/mp4"></audio>
+                        <audio id="audio4" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/4.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -362,7 +356,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio5" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/5.mp3" type="audio/mp3"></audio>
+                        <audio id="audio5" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/5.mp3" type="audio/mp3"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -379,7 +373,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio6" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/6.mp4" type="audio/mp4"></audio>
+                        <audio id="audio6" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/6.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -396,7 +390,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                         <audio id="audio7" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/7.mp4" type="audio/mp4"></audio>
+                         <audio id="audio7" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/7.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -413,7 +407,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio8" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/8.mp4" type="audio/mp4"></audio>
+                        <audio id="audio8" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/8.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -430,7 +424,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio9" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/9.mp4" type="audio/mp4"></audio>
+                        <audio id="audio9" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/9.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -447,7 +441,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio10" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/10.mp4" type="audio/mp4"></audio>
+                        <audio id="audio10" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/10.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -464,7 +458,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio11" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/11.mp4" type="audio/mp4"></audio>
+                        <audio id="audio11" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/11.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -481,7 +475,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio12" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/12.mp4" type="audio/mp4"></audio>
+                        <audio id="audio12" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/12.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -498,7 +492,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio13" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/13.mp4" type="audio/mp4"></audio>
+                        <audio id="audio13" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/13.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -515,7 +509,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio14" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/14.mp4" type="audio/mp4"></audio>
+                        <audio id="audio14" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/14.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -532,7 +526,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio15" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/15.mp4" type="audio/mp4"></audio>
+                        <audio id="audio15" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/15.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -549,7 +543,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio16" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/16.mp4" type="audio/mp4"></audio>
+                        <audio id="audio16" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/16.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -566,7 +560,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio17" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/17.mp4" type="audio/mp4"></audio>
+                        <audio id="audio17" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/17.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -583,7 +577,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio18" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/18.mp4" type="audio/mp4"></audio>
+                        <audio id="audio18" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/18.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -600,7 +594,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio19" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/19.mp4" type="audio/mp4"></audio>
+                        <audio id="audio19" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/19.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -617,7 +611,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio20" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/20.mp4" type="audio/mp4"></audio>
+                        <audio id="audio20" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/20.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -634,7 +628,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio21" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/21.mp4" type="audio/mp4"></audio>
+                        <audio id="audio21" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/21.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -651,7 +645,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio22" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/22.mp4" type="audio/mp4"></audio>
+                        <audio id="audio22" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/22.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                  <tr>
@@ -668,7 +662,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio23" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/23.mp4" type="audio/mp4"></audio>
+                        <audio id="audio23" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/23.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                  <tr>
@@ -685,7 +679,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio24" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/24.mp4" type="audio/mp4"></audio>
+                        <audio id="audio24" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/24.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -702,7 +696,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio25" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/25.mp4" type="audio/mp4"></audio>
+                        <audio id="audio25" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/25.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -719,7 +713,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio26" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/26.mp4" type="audio/mp4"></audio>
+                        <audio id="audio26" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/26.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -736,7 +730,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio27" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/27.mp4" type="audio/mp4"></audio>
+                        <audio id="audio27" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/27.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -753,12 +747,15 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio28" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/28.mp4" type="audio/mp4"></audio>
+                        <audio id="audio28" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/28.mp4" type="audio/mp4"></audio>
                     </td>
+                </tr>
+                <tr class="separator-row">
+                    <td colspan="3">현장 전시품 (No. 29~44)</td>
                 </tr>
                 <tr>
                     <td>29</td>
-                    <td>시트사업부 추가 전시품 29</td>
+                    <td>슬림형 액티브 헤드레스트</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio29', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio29">
@@ -770,12 +767,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio29" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/29.mp4" type="audio/mp4"></audio>
+                        <audio id="audio29" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/29.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
-                 <tr>
+                <tr>
                     <td>30</td>
-                    <td>시트사업부 추가 전시품 30</td>
+                    <td>틸트 엔트리 시스템</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio30', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio30">
@@ -787,15 +784,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio30" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/30.mp4" type="audio/mp4"></audio>
+                        <audio id="audio30" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/30.mp4" type="audio/mp4"></audio>
                     </td>
-                </tr>
-                <tr class="separator-row">
-                    <td colspan="3">화성공장 전시품 (No. 31~50)</td>
                 </tr>
                 <tr>
                     <td>31</td>
-                    <td>화성공장 전시품 31</td>
+                    <td>슬라이딩 및 회전 가능한 2열 센터 암레스트</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio31', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio31">
@@ -807,12 +801,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio31" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/31.mp4" type="audio/mp4"></audio>
+                        <audio id="audio31" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/31.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>32</td>
-                    <td>화성공장 전시품 32</td>
+                    <td>2열 시트 통합 안전벨트 일체형 암레스트</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio32', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio32">
@@ -824,12 +818,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio32" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/32.mp4" type="audio/mp4"></audio>
+                        <audio id="audio32" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/32.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>33</td>
-                    <td>전동 슬라이딩 & 폴딩 & 리클라이닝 시스템</td>
+                    <td>헤드레스트 내장형 공기 청정 시스템</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio33', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio33">
@@ -841,7 +835,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio33" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/33.mp4" type="audio/mp4"></audio>
+                        <audio id="audio33" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/33.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -858,7 +852,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio34" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/34.mp4" type="audio/mp4"></audio>
+                        <audio id="audio34" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/34.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -875,7 +869,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio35" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/35.mp4" type="audio/mp4"></audio>
+                        <audio id="audio35" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/35.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -892,12 +886,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio36" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/36.mp4" type="audio/mp4"></audio>
+                        <audio id="audio36" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/36.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>37</td>
-                    <td>천연가죽 시트커버 개발</td>
+                    <td>폐식용유 재활용 PU인조가죽 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio37', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio37">
@@ -909,12 +903,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio37" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/37.mp4" type="audio/mp4"></audio>
+                        <audio id="audio37" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/37.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>38</td>
-                    <td>열전도성 코팅사를 이용한 통풍 시스템 개발</td>
+                    <td>친환경 천연가죽 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio38', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio38">
@@ -926,12 +920,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio38" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/38.mp4" type="audio/mp4"></audio>
+                        <audio id="audio38" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/38.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>39</td>
-                    <td>재활용 소재 적용 경량화 시트백 프레임 개발</td>
+                    <td>친환경 발포제를 활용한 시트 패드 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio39', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio39">
@@ -943,12 +937,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio39" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/39.mp4" type="audio/mp4"></audio>
+                        <audio id="audio39" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/39.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>40</td>
-                    <td>고기능성 차량용 매트 개발</td>
+                    <td>고기능성 시트쿠션 패드 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio40', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio40">
@@ -960,12 +954,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio40" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/40.mp4" type="audio/mp4"></audio>
+                        <audio id="audio40" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/40.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>41</td>
-                    <td>차세대 전장 플랫폼 시트 개발</td>
+                    <td>차량 내부용 스위치 신기술 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio41', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio41">
@@ -977,7 +971,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio41" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/41.mp4" type="audio/mp4"></audio>
+                        <audio id="audio41" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/41.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -994,7 +988,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio42" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/42.mp4" type="audio/mp4"></audio>
+                        <audio id="audio42" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/42.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -1011,7 +1005,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio43" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/43.mp4" type="audio/mp4"></audio>
+                        <audio id="audio43" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/43.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -1028,12 +1022,15 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio44" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/44.mp4" type="audio/mp4"></audio>
+                        <audio id="audio44" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/44.mp4" type="audio/mp4"></audio>
                     </td>
+                </tr>
+                <tr class="separator-row">
+                    <td colspan="3">화성/현장 협업 전시품 (No. 45~50)</td>
                 </tr>
                 <tr>
                     <td>45</td>
-                    <td>시트 포지션 제어기 개발</td>
+                    <td>프리미엄 컴포트 시트</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio45', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio45">
@@ -1045,12 +1042,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio45" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/45.mp4" type="audio/mp4"></audio>
+                        <audio id="audio45" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/45.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>46</td>
-                    <td>전동 리클라이너 시스템</td>
+                    <td>경량화 통합 전동시트 스위치 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio46', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio46">
@@ -1062,12 +1059,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio46" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/46.mp4" type="audio/mp4"></audio>
+                        <audio id="audio46" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/46.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>47</td>
-                    <td>미니밴용 3열 싱킹 시트</td>
+                    <td>시트 자동 이송장치 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio47', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio47">
@@ -1079,12 +1076,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio47" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/47.mp4" type="audio/mp4"></audio>
+                        <audio id="audio47" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/47.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>48</td>
-                    <td>친환경 PU 인조가죽 개발</td>
+                    <td>헤드레스트 내장 스피커 시스템</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio48', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio48">
@@ -1096,12 +1093,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio48" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/48.mp4" type="audio/mp4"></audio>
+                        <audio id="audio48" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/48.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>49</td>
-                    <td>경량화 PU 인조가죽 개발</td>
+                    <td>USB-C 타입 포트 일체형 암레스트 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio49', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio49">
@@ -1113,7 +1110,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio49" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/49.mp4" type="audio/mp4"></audio>
+                        <audio id="audio49" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/49.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -1122,7 +1119,7 @@
                     <td></td>
                 </tr>
                 <tr class="separator-row">
-                    <td colspan="3">창원공장 전시품 (No. 51~66)</td>
+                    <td colspan="3">화성공장 전시품 (No. 51~66)</td>
                 </tr>
                 <tr>
                     <td>51</td>
@@ -1138,7 +1135,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio51" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/51.mp4" type="audio/mp4"></audio>
+                        <audio id="audio51" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/51.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -1155,7 +1152,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio52" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/52.mp4" type="audio/mp4"></audio>
+                        <audio id="audio52" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/52.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -1172,12 +1169,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio53" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/53.mp4" type="audio/mp4"></audio>
+                        <audio id="audio53" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/53.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>54</td>
-                    <td>창원공장 전시품 54</td>
+                    <td>친환경 시트쿠션 패드 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio54', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio54">
@@ -1189,12 +1186,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio54" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/54.mp4" type="audio/mp4"></audio>
+                        <audio id="audio54" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/54.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>55</td>
-                    <td>창원공장 전시품 55</td>
+                    <td>친환경 재활용 PET Felt 보드 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio55', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio55">
@@ -1206,12 +1203,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio55" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/55.mp4" type="audio/mp4"></audio>
+                        <audio id="audio55" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/55.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>56</td>
-                    <td>창원공장 전시품 56</td>
+                    <td>헤드레스트 폴딩 시스템</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio56', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio56">
@@ -1223,12 +1220,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio56" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/56.mp4" type="audio/mp4"></audio>
+                        <audio id="audio56" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/56.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>57</td>
-                    <td>창원공장 전시품 57</td>
+                    <td>차량용 무선충전기 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio57', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio57">
@@ -1240,12 +1237,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio57" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/57.mp4" type="audio/mp4"></audio>
+                        <audio id="audio57" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/57.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>58</td>
-                    <td>창원공장 전시품 58</td>
+                    <td>미니밴용 3열 싱킹 시트</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio58', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio58">
@@ -1257,7 +1254,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio58" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/58.mp4" type="audio/mp4"></audio>
+                        <audio id="audio58" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/58.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -1274,7 +1271,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio59" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/59.mp4" type="audio/mp4"></audio>
+                        <audio id="audio59" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/59.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -1291,7 +1288,7 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio60" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/60.mp4" type="audio/mp4"></audio>
+                        <audio id="audio60" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/60.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
@@ -1308,12 +1305,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio61" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/61.mp4" type="audio/mp4"></audio>
+                        <audio id="audio61" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/61.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>62</td>
-                    <td>창원공장 전시품 62</td>
+                    <td>공압식 럼버서포트</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio62', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio62">
@@ -1325,12 +1322,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio62" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/62.mp4" type="audio/mp4"></audio>
+                        <audio id="audio62" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/62.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>63</td>
-                    <td>창원공장 전시품 63</td>
+                    <td>오디오 앰프 개발</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio63', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio63">
@@ -1342,12 +1339,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio63" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/63.mp4" type="audio/mp4"></audio>
+                        <audio id="audio63" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/63.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>64</td>
-                    <td>창원공장 전시품 64</td>
+                    <td>오디오 앰프 개발 2</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio64', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio64">
@@ -1359,12 +1356,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio64" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/64.mp4" type="audio/mp4"></audio>
+                        <audio id="audio64" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/64.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>65</td>
-                    <td>창원공장 전시품 65</td>
+                    <td>오디오 앰프 개발 3</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio65', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio65">
@@ -1376,12 +1373,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio65" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/65.mp4" type="audio/mp4"></audio>
+                        <audio id="audio65" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/65.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>66</td>
-                    <td>창원공장 전시품 66</td>
+                    <td>헤드레스트 폴딩 시스템 2</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio66', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio66">
@@ -1393,12 +1390,12 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio66" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/66.mp4" type="audio/mp4"></audio>
+                        <audio id="audio66" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/66.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
                 <tr>
                     <td>67</td>
-                    <td>추가 전시품 67 (창원공장)</td>
+                    <td>추가 전시품 67 (화성공장)</td>
                     <td>
                         <span class="audio-box" onclick="toggleCustomAudio(event, 'audio67', this)">🔊</span>
                         <div class="custom-audio-player" data-audio-id="audio67">
@@ -1410,378 +1407,382 @@
                                 <div class="time-display">00:00 / 00:00</div>
                             </div>
                         </div>
-                        <audio id="audio67" playsinline webkit-playsinline preload="metadata" crossorigin="anonymous" src="https://seattechday.github.io/audio/67.mp4" type="audio/mp4"></audio>
+                        <audio id="audio67" playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="https://seattechday.github.io/audio/67.mp4" type="audio/mp4"></audio>
                     </td>
                 </tr>
             </tbody>
         </table>
-    </div>
-
-<script>
-    // ⭐️ 추가: 드래그 시작 전 재생 상태 저장 변수
-    let wasPlayingBeforeSeek = false; 
-
-    // 현재 활성화된 오디오 및 플레이어 상태를 추적하는 변수
-    let currentlyActiveAudio = null; 
-    let updateIntervals = {}; // 각 오디오 ID별로 setInterval ID를 저장
-    let isSeeking = false; // 드래그 탐색 중인지 여부
-    let activePlayer = null; // 현재 탐색 중인 플레이어 (드래그용)
-
-    // 1. 시간 포맷 변환 함수
-    function formatTime(seconds) {
-        if (!isFinite(seconds) || seconds < 0) return '00:00';
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = Math.floor(seconds % 60);
-        const paddedMinutes = String(minutes).padStart(2, '0');
-        const paddedSeconds = String(remainingSeconds).padStart(2, '0');
-        return `${paddedMinutes}:${paddedSeconds}`;
-    }
-
-    // 2. 강제 프로그레스 바 업데이트 시작 및 종료 감지
-    function startProgressUpdate(audioId, playerElement) {
-        const audio = document.getElementById(audioId);
-        const progressFill = playerElement.querySelector('.progress-fill');
-        const timeDisplay = playerElement.querySelector('.time-display');
-        
-        // 기존 인터벌이 있으면 정리
-        stopProgressUpdate(audioId); 
-
-        function update() {
-            if (audio.paused || audio.ended || isSeeking) {
-                return;
-            }
-            // ⭐️ FIX: Duration이 유효한지 다시 확인
-            if (!isFinite(audio.duration) || audio.duration <= 0) return;
-
-            const percentage = (audio.currentTime / audio.duration) * 100;
-            progressFill.style.width = percentage + '%'; 
-            timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
-        }
-        
-        // 100ms 마다 업데이트
-        updateIntervals[audioId] = setInterval(update, 100); 
-    }
-
-    function stopProgressUpdate(audioId) {
-        if (updateIntervals[audioId]) {
-            clearInterval(updateIntervals[audioId]);
-            delete updateIntervals[audioId];
-        }
-    }
+    </div> 
     
-    // 3. 플레이어 상태 초기화
-    function resetPlayer(audio, playerElement) {
-        const audioId = audio.id;
-        const btn = playerElement.querySelector('.play-pause-btn');
-        const boxElement = playerElement.previousElementSibling; 
+    <script>
+        // 현재 활성화된 오디오 및 플레이어 상태를 추적하는 변수
+        let currentlyActiveAudio = null;
+        let updateIntervals = {}; // 각 오디오 ID별로 setInterval ID를 저장
+        let isSeeking = false; // 드래그 탐색 중인지 여부
+        let activePlayer = null; // 현재 탐색 중인 플레이어 (드래그용)
 
-        // 1. 타이머 중지
-        stopProgressUpdate(audioId);
-        
-        // 2. Audio 객체 초기화 (재생 이벤트 무한 호출 방지)
-        audio.pause(); 
-        audio.currentTime = 0;
-        audio.onended = null; 
-
-        // 3. UI 상태 초기화
-        btn.textContent = '▶';
-        btn.classList.remove('playing');
-        btn.dataset.state = 'paused';
-        playerElement.querySelector('.progress-fill').style.width = '0%';
-
-        // 4. 시간 표시 초기화
-        const duration = isFinite(audio.duration) && audio.duration > 0 ? formatTime(audio.duration) : '00:00';
-        playerElement.querySelector('.time-display').textContent = `00:00 / ${duration}`;
-
-        // 5. 🔊 버튼 표시 및 플레이어 숨김 (프로그레스 바 제거)
-        playerElement.classList.remove('active');
-        if (boxElement) { 
-            boxElement.classList.remove('hidden');
+        // 1. 시간 포맷 변환 함수
+        function formatTime(seconds) {
+            if (!isFinite(seconds) || seconds < 0) return '00:00';
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            const formattedMinutes = String(minutes).padStart(2, '0');
+            const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+            return `${formattedMinutes}:${formattedSeconds}`;
         }
-        currentlyActiveAudio = null;
-    }
 
-    // 4. 재생/일시정지 버튼 클릭 처리
-    function playPauseAudio(event, audioId, playerElement) {
-        if (event) {
-             event.stopPropagation(); 
-        } 
-        const audio = document.getElementById(audioId);
-        const btn = playerElement.querySelector('.play-pause-btn');
+        // 2. 플레이어 UI 업데이트 함수
+        function updateProgressBar(audio, playerElement) {
+            if (!audio || !playerElement || !isFinite(audio.duration) || audio.duration === 0) return;
+            
+            const currentTime = audio.currentTime;
+            const duration = audio.duration;
+            const percent = (currentTime / duration) * 100;
+            
+            const progressFill = playerElement.querySelector('.progress-fill');
+            const timeDisplay = playerElement.querySelector('.time-display');
 
-        // 4-1. 다른 오디오가 재생 중이라면 중지 및 초기화
-        if (currentlyActiveAudio && currentlyActiveAudio.id !== audioId) {
-            const prevAudio = currentlyActiveAudio; 
-            let prevPlayer = prevAudio.closest('.custom-audio-player');
-            if (prevPlayer) {
-                resetPlayer(prevAudio, prevPlayer); 
+            // 드래그 중이 아닐 때만 UI를 실시간 업데이트
+            if (!isSeeking) {
+                progressFill.style.width = `${percent}%`;
+            }
+            timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+        }
+
+        // 3. 진행 시간 업데이트를 시작/중지하는 함수
+        function startProgressUpdate(audioId, playerElement) {
+            // 이미 인터벌이 실행 중이면 중지
+            stopProgressUpdate(audioId);
+            
+            const audio = document.getElementById(audioId);
+            updateIntervals[audioId] = setInterval(() => {
+                if (audio && !audio.paused && !isSeeking) {
+                    updateProgressBar(audio, playerElement);
+                } else if (audio.paused) {
+                    // 일시 정지되면 타이머 중지
+                    stopProgressUpdate(audioId);
+                }
+            }, 50); // 50ms마다 업데이트
+        }
+        
+        function stopProgressUpdate(audioId) {
+            if (updateIntervals[audioId]) {
+                clearInterval(updateIntervals[audioId]);
+                delete updateIntervals[audioId];
             }
         }
         
-        currentlyActiveAudio = audio;
-
-        if (audio.paused) {
-            // 재생 시작
-            audio.play().then(() => {
-                btn.textContent = '⏸';
-                btn.classList.add('playing');
-                btn.dataset.state = 'playing';
-                startProgressUpdate(audioId, playerElement);
-            }).catch(error => {
-                console.warn("Audio playback failed:", error);
-                btn.textContent = '▶';
-                btn.classList.remove('playing');
-                btn.dataset.state = 'paused';
-            });
-        } else {
-            // 일시 정지
+        // 3-1. 플레이어 초기화 (닫을 때 호출)
+        function resetPlayer(audio, playerElement) {
+            // UI 초기화
             audio.pause();
+            stopProgressUpdate(audio.id);
+            playerElement.classList.remove('active');
+            playerElement.style.display = 'none';
+
+            // 버튼 초기화
+            const btn = playerElement.querySelector('.play-pause-btn');
             btn.textContent = '▶';
             btn.classList.remove('playing');
             btn.dataset.state = 'paused';
-            // 일시 정지 시 타이머 중지
-            stopProgressUpdate(audioId);
-        }
-    }
 
-    // 5. 해설(🔊) 아이콘 클릭 시 커스텀 플레이어 토글 함수
-    function toggleCustomAudio(event, audioId, boxElement) {
-        if (event) {
-            event.stopPropagation();
-        }
-        const audioToActivate = document.getElementById(audioId);
-        const playerToActivate = boxElement.nextElementSibling;
-        const timeDisplay = playerToActivate.querySelector('.time-display');
-
-        // 5-1. 다른 플레이어 정리
-        if (currentlyActiveAudio && currentlyActiveAudio.id !== audioId) {
-            const prevAudio = currentlyActiveAudio; 
-            let prevPlayer = prevAudio.closest('.custom-audio-player');
-            if (prevPlayer) {
-                prevAudio.pause();
-                resetPlayer(prevAudio, prevPlayer); 
+            // 🔊 아이콘 다시 표시
+            const audioBox = playerElement.previousElementSibling;
+            if (audioBox && audioBox.classList.contains('audio-box')) {
+                audioBox.style.display = 'block';
+            }
+            
+            // 전역 상태 초기화
+            if (currentlyActiveAudio && currentlyActiveAudio.id === audio.id) {
+                currentlyActiveAudio = null;
             }
         }
 
-        // 5-2. 현재 클릭된 오디오가 이미 활성화된 상태인지 확인
-        if (playerToActivate.classList.contains('active')) {
-            // 비활성화 (축소)
-            if (!audioToActivate.paused) {
-                audioToActivate.pause();
+        // 4. 재생/일시정지 버튼 클릭 처리
+        function playPauseAudio(event, audioId, playerElement) {
+            event.stopPropagation(); // 테이블 행 클릭 이벤트 방지
+            const audio = document.getElementById(audioId);
+            const btn = playerElement.querySelector('.play-pause-btn');
+
+            // 4-1. 다른 오디오가 재생 중이라면 중지 및 초기화
+            if (currentlyActiveAudio && currentlyActiveAudio.id !== audioId) {
+                const prevAudio = currentlyActiveAudio;
+                let prevPlayer = prevAudio.closest('.custom-audio-player');
+                if (prevPlayer) {
+                    resetPlayer(prevAudio, prevPlayer);
+                }
             }
-            resetPlayer(audioToActivate, playerToActivate);
-        } else {
-            // 활성화 (확장)
-            playerToActivate.classList.add('active');
-            boxElement.classList.add('hidden');
-            currentlyActiveAudio = audioToActivate;
+            currentlyActiveAudio = audio;
 
-            // 네이티브 onended 이벤트 연결
-            audioToActivate.onended = () => {
-                resetPlayer(audioToActivate, playerToActivate);
-            };
-
-            // duration 로드 로직
-            if (isFinite(audioToActivate.duration) && audioToActivate.duration > 0) {
-                timeDisplay.textContent = `00:00 / ${formatTime(audioToActivate.duration)}`;
+            if (audio.paused) {
+                // 재생 시작
+                audio.play().then(() => {
+                    btn.textContent = '⏸';
+                    btn.classList.add('playing');
+                    btn.dataset.state = 'playing';
+                    // duration이 로드된 후 업데이트 시작
+                    startProgressUpdate(audioId, playerElement);
+                }).catch(error => {
+                    // iOS/Safari 정책으로 인한 자동 재생 실패 시 (사용자 상호작용 후 재생 가능)
+                    console.warn("Audio playback failed (usually on iOS/Safari before user interaction):", error);
+                    btn.textContent = '▶';
+                    btn.classList.remove('playing');
+                    btn.dataset.state = 'paused';
+                });
             } else {
-                audioToActivate.preload = 'metadata';
-                audioToActivate.load();
-                audioToActivate.addEventListener('loadedmetadata', function listener() {
-                    timeDisplay.textContent = `00:00 / ${formatTime(audioToActivate.duration)}`;
-                    audioToActivate.removeEventListener('loadedmetadata', listener);
-                }, { once: true });
+                // 일시 정지
+                audio.pause();
+                btn.textContent = '▶';
+                btn.classList.remove('playing');
+                btn.dataset.state = 'paused';
+                // 일시 정지 시 타이머 중지
+                stopProgressUpdate(audioId);
             }
-            // 바로 재생 시작
-            playPauseAudio(null, audioId, playerToActivate);
         }
-    }
 
-    // 6. 플레이어 외부 클릭 시 모든 플레이어 닫기
-    function handleOutsideClick(event) {
-        if (event.type === 'click' && event.button !== 0) return;
-        
-        if (currentlyActiveAudio) {
-            let target = event.target;
-            let isInsidePlayer = false;
-
-            while (target && target !== document.body) {
-                if (target.classList && (target.classList.contains('custom-audio-player') || target.classList.contains('audio-box'))) {
-                     isInsidePlayer = true;
-                     break;
-                }
-                target = target.parentNode;
+        // 5. 해설(🔊) 아이콘 클릭 시 커스텀 플레이어 토글 함수
+        function toggleCustomAudio(event, audioId, boxElement) {
+            if (event) {
+                event.stopPropagation();
             }
+            const audioToActivate = document.getElementById(audioId);
+            const playerToActivate = boxElement.nextElementSibling;
+            const timeDisplay = playerToActivate.querySelector('.time-display');
 
-            if (!isInsidePlayer && !isSeeking) {
-                const playerElement = currentlyActiveAudio.closest('.custom-audio-player');
-                if (playerElement) {
-                    currentlyActiveAudio.pause();
-                    resetPlayer(currentlyActiveAudio, playerElement);
+            // 5-1. 이미 다른 플레이어가 활성화된 경우: 모두 정리
+            if (currentlyActiveAudio && currentlyActiveAudio.id !== audioId) {
+                const prevAudio = currentlyActiveAudio;
+                let prevPlayer = prevAudio.closest('.custom-audio-player');
+                if (prevPlayer) {
+                    prevAudio.pause();
+                    resetPlayer(prevAudio, prevPlayer);
                 }
             }
+
+            // 5-2. 현재 플레이어 활성화/비활성화 토글
+            if (playerToActivate.classList.contains('active')) {
+                // 비활성화 (닫기)
+                resetPlayer(audioToActivate, playerToActivate);
+            } else {
+                // 활성화 (열기)
+                playerToActivate.style.display = 'flex';
+                // 🔊 아이콘 숨기기
+                boxElement.style.display = 'none';
+
+                // duration이 로드되지 않았다면 로드 시도를 유도
+                if (isNaN(audioToActivate.duration) || audioToActivate.duration === 0) {
+                    audioToActivate.addEventListener('loadedmetadata', () => {
+                        updateProgressBar(audioToActivate, playerToActivate);
+                    }, { once: true });
+                    // audioToActivate.load(); // preload="auto"가 처리하므로 생략 가능
+                }
+                
+                // UI 업데이트 (최초 시간 표시)
+                updateProgressBar(audioToActivate, playerToActivate);
+                
+                // 플레이어 활성화
+                setTimeout(() => {
+                    playerToActivate.classList.add('active');
+                }, 10); // CSS transition을 위한 약간의 지연
+
+                // 전역 상태 업데이트
+                currentlyActiveAudio = audioToActivate;
+            }
         }
-    }
 
-    // --- 7. 드래그를 통한 재생 위치 이동 기능 (터치 포함) ---
-    // ⭐️ MODIFIED: 탐색 위치를 계산하고 UI에 반영. currentTime 설정은 handleSeekEnd에서만 수행.
-    function setSeekTime(event, progressBarContainer, audio) {
-        const rect = progressBarContainer.getBoundingClientRect();
-        const clientX = event.touches ? event.touches[0].clientX : event.clientX;
-        let seekPosition = (clientX - rect.left) / rect.width;
-        seekPosition = Math.max(0, Math.min(1, seekPosition));
-        
-        const progressFill = activePlayer.querySelector('.progress-fill');
-        const timeDisplay = activePlayer.querySelector('.time-display');
+        // 6. 플레이어 외부 클릭 시 닫기 (드래그 중이 아닐 때만)
+        function handleOutsideClick(event) {
+            if (currentlyActiveAudio) {
+                let target = event.target;
+                let isInsidePlayer = false;
+                
+                // 클릭된 요소가 플레이어 내부인지 확인
+                while (target && target !== document.body) {
+                    if (target.classList && target.classList.contains('custom-audio-player')) {
+                        isInsidePlayer = true;
+                        break;
+                    }
+                    if (target.classList && target.classList.contains('audio-box')) {
+                        isInsidePlayer = true; // 🔊 버튼 클릭도 내부 상호작용으로 간주
+                        break;
+                    }
+                    target = target.parentNode;
+                }
 
-        if (isFinite(audio.duration) && audio.duration > 0) {
-            const seekTime = seekPosition * audio.duration;
-            
-            // ⭐️ 핵심 수정: 계산된 시간만 activePlayer 데이터셋에 저장합니다.
-            activePlayer.dataset.calculatedSeekTime = seekTime.toString();
-            
-            const percentage = seekPosition * 100;
-            progressFill.style.width = percentage + '%';
-            timeDisplay.textContent = `${formatTime(seekTime)} / ${formatTime(audio.duration)}`;
-        } else {
-            const percentage = seekPosition * 100;
-            progressFill.style.width = percentage + '%';
+                // 플레이어 외부를 클릭했고, 현재 탐색 중이 아니라면 플레이어 닫기
+                if (!isInsidePlayer && !isSeeking) {
+                    const playerElement = currentlyActiveAudio.closest('.custom-audio-player');
+                    if (playerElement) {
+                        currentlyActiveAudio.pause();
+                        resetPlayer(currentlyActiveAudio, playerElement);
+                    }
+                }
+            }
         }
-    }
 
-    // 7-1. 드래그 시작 처리 함수
-    function handleSeekStart(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        const progressBarContainer = event.currentTarget;
-        activePlayer = progressBarContainer.closest('.custom-audio-player');
-        const audio = document.getElementById(activePlayer.dataset.audioId);
-        
-        if (!audio || isSeeking || !audio.duration || !isFinite(audio.duration)) return;
-        isSeeking = true;
-        
-        // ⭐️ 추가: 드래그 시작 시 재생 상태 저장 및 타이머 중지
-        wasPlayingBeforeSeek = !audio.paused; 
-        stopProgressUpdate(audio.id); // UI 업데이트 타이머만 중지 (오디오는 계속 재생)
-        
-        if (event.type === 'mousedown') {
+        // --- 7. 드래그를 통한 재생 위치 이동 기능 (터치 포함) ---
+
+        // 탐색 시작
+        function handleSeekStart(event) {
+            event.preventDefault(); // 스크롤 방지 (터치 이벤트의 경우)
+            
+            const progressBarContainer = event.currentTarget;
+            activePlayer = progressBarContainer.closest('.custom-audio-player');
+            if (!activePlayer) return;
+            
+            const audioId = activePlayer.dataset.audioId;
+            const audio = document.getElementById(audioId);
+            
+            if (!isFinite(audio.duration) || audio.duration === 0) return;
+            
+            isSeeking = true;
+            stopProgressUpdate(audioId); // 드래그 시작 시 타이머 중지
+            
+            // 이벤트 리스너 연결
             document.addEventListener('mousemove', handleSeekMove);
             document.addEventListener('mouseup', handleSeekEnd);
-        } else if (event.type === 'touchstart') {
             document.addEventListener('touchmove', handleSeekMove, { passive: false });
             document.addEventListener('touchend', handleSeekEnd);
-        }
-        
-        // 초기 위치 설정 (UI만 업데이트)
-        setSeekTime(event, progressBarContainer, audio);
-    }
-
-    function handleSeekMove(event) {
-        if (!isSeeking || !activePlayer) return;
-        event.preventDefault();
-        const progressBarContainer = activePlayer.querySelector('.progress-bar-container');
-        const audio = document.getElementById(activePlayer.dataset.audioId);
-        setSeekTime(event, progressBarContainer, audio);
-    }
-
-    // 7-3. 드래그 종료 처리 함수
-    function handleSeekEnd(event) {
-        if (!isSeeking || !activePlayer) return;
-        
-        if (event.type === 'mouseup' || event.type === 'touchend') {
-             event.stopPropagation(); 
-        }
-
-        isSeeking = false;
-        
-        const progressBarContainer = activePlayer.querySelector('.progress-bar-container');
-        const audio = document.getElementById(activePlayer.dataset.audioId);
-        
-        // 1. 최종 위치 계산 및 UI 업데이트
-        setSeekTime(event, progressBarContainer, audio); 
-        const seekTime = parseFloat(activePlayer.dataset.calculatedSeekTime); 
-
-        if (!isNaN(seekTime)) {
             
-            // ⭐️⭐️ 핵심 FIX: 모바일 Seek 강제 적용 (Pause-Seek-Play)
-            // 2. 일시 정지: currentTime 변경을 브라우저에 강제합니다.
-            audio.pause(); 
+            // 즉시 위치 계산 및 UI 업데이트 (초기 클릭 위치)
+            setSeekTime(event, progressBarContainer, audio);
+        }
+
+        // 탐색 중 위치 업데이트 (UI만)
+        function handleSeekMove(event) {
+            if (!activePlayer || !isSeeking) return;
+            event.preventDefault();
             
-            // 3. currentTime 설정
-            audio.currentTime = seekTime; 
-        }
-        
-        // 4. 재생 상태 복구
-        const btn = activePlayer.querySelector('.play-pause-btn');
-
-        if (wasPlayingBeforeSeek) { // 드래그 시작 전에 재생 중이었다면 다시 재생
-            audio.play().then(() => {
-                btn.textContent = '⏸';
-                btn.classList.add('playing');
-                btn.dataset.state = 'playing';
-                startProgressUpdate(audio.id, activePlayer); // 인터벌 재시작
-            }).catch(error => {
-                console.warn("Playback failed after seeking:", error);
-                // 재생 실패 시 일시정지 상태 유지
-                btn.textContent = '▶';
-                btn.classList.remove('playing');
-                btn.dataset.state = 'paused';
-                startProgressUpdate(audio.id, activePlayer);
-            });
-        } else {
-            // 드래그 시작 전에 멈춰 있었다면, 멈춘 상태 유지 및 UI 업데이트
-            btn.textContent = '▶';
-            btn.classList.remove('playing');
-            btn.dataset.state = 'paused';
-            startProgressUpdate(audio.id, activePlayer); // UI 시간만 업데이트
+            const audioId = activePlayer.dataset.audioId;
+            const audio = document.getElementById(audioId);
+            const progressBarContainer = activePlayer.querySelector('.progress-bar-container');
+            
+            setSeekTime(event, progressBarContainer, audio);
         }
 
-        // 5. 이벤트 리스너 정리 및 상태 초기화
-        document.removeEventListener('mousemove', handleSeekMove);
-        document.removeEventListener('mouseup', handleSeekEnd);
-        document.removeEventListener('touchmove', handleSeekMove);
-        document.removeEventListener('touchend', handleSeekEnd);
-        
-        wasPlayingBeforeSeek = false; 
-        activePlayer = null;
-    }
+        // 탐색 위치를 계산하고 UI에 반영
+        function setSeekTime(event, progressBarContainer, audio) {
+            const rect = progressBarContainer.getBoundingClientRect();
+            const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+            let seekPosition = (clientX - rect.left) / rect.width;
+            seekPosition = Math.max(0, Math.min(1, seekPosition));
+            
+            const progressFill = activePlayer.querySelector('.progress-fill');
+            const timeDisplay = activePlayer.querySelector('.time-display');
+            
+            if (isFinite(audio.duration) && audio.duration > 0) {
+                const seekTime = seekPosition * audio.duration;
 
-    // 8. 오디오 컨텍스트 활성화 (iOS/Safari)
-    function wakeUpAudioContext() {
-        const allAudio = document.querySelectorAll('audio');
-        let playedSuccessfully = false;
-        allAudio.forEach(audio => {
-            if (audio.readyState >= 1) { 
-                audio.play().then(() => {
-                    audio.pause();
-                    playedSuccessfully = true;
-                }).catch(error => {
-                    // console.warn(`Audio ${audio.id} context activation attempted.`, error.message);
-                });
+                // 드래그 중에는 currentTime 업데이트는 끝날 때만 하고, UI만 실시간 업데이트
+                progressFill.style.width = (seekPosition * 100) + '%';
+                timeDisplay.textContent = `${formatTime(seekTime)} / ${formatTime(audio.duration)}`;
             }
-        });
-        
-        if (playedSuccessfully) {
-             document.removeEventListener('touchstart', wakeUpAudioContext);
-             document.removeEventListener('click', wakeUpAudioContext);
         }
-    }
-
-
-    // 페이지 로드 후 모든 리스너 연결
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.progress-bar-container').forEach(container => {
-            container.addEventListener('mousedown', handleSeekStart);
-            container.addEventListener('touchstart', handleSeekStart, { passive: false });
-        });
         
-        // 문서 전체에 클릭/터치 리스너 연결 (플레이어 외부 클릭 감지)
-        document.addEventListener('click', handleOutsideClick); 
-        document.addEventListener('touchend', handleOutsideClick); 
-    });
+        // 탐색 종료 (수정됨: iOS 대응 로직 추가)
+        function handleSeekEnd(event) {
+            if (!activePlayer) return;
+            isSeeking = false;
+            
+            event.preventDefault(); // 터치 이벤트에서 스크롤 방지
+            
+            const audioId = activePlayer.dataset.audioId;
+            const audio = document.getElementById(audioId);
+            const progressBarContainer = activePlayer.querySelector('.progress-bar-container');
+            const btn = activePlayer.querySelector('.play-pause-btn');
+            const wasPlayingBeforeSeek = btn.dataset.state === 'playing'; // 드래그 시작 시점의 상태
+            
+            // 1. 최종 탐색 위치 계산
+            const rect = progressBarContainer.getBoundingClientRect();
+            const clientX = event.changedTouches ? event.changedTouches[0].clientX : event.clientX;
+            let seekPosition = (clientX - rect.left) / rect.width;
+            seekPosition = Math.max(0, Math.min(1, seekPosition));
+            
+            // 2. 프로그레스 바 UI를 최종 위치로 확정
+            const progressFill = activePlayer.querySelector('.progress-fill');
+            progressFill.style.width = (seekPosition * 100) + '%'; 
+            
+            stopProgressUpdate(audioId); // 기존 타이머 중지
+            
+            if (isFinite(audio.duration) && audio.duration > 0) {
+                const seekTime = seekPosition * audio.duration;
+                
+                // 💡 iOS/모바일 대응: load()를 사용한 점프 안정화
+                audio.pause();
+                audio.load();
+                audio.currentTime = seekTime; 
+                
+                // 드래그 후 재생 상태였다면 다시 play
+                if (wasPlayingBeforeSeek) {
+                    audio.play().then(() => {
+                         btn.textContent = '⏸'; 
+                         btn.classList.add('playing');
+                         btn.dataset.state = 'playing';
+                         startProgressUpdate(audioId, activePlayer); // 타이머 재시작
+                    }).catch(e => {
+                        console.error("Audio playback error after seek:", e);
+                        // 재생 실패 시 멈춤 상태로 유지
+                        btn.textContent = '▶'; 
+                        btn.classList.remove('playing');
+                        btn.dataset.state = 'paused';
+                        updateProgressBar(audio, activePlayer); // UI 시간만 업데이트
+                    });
+                } else {
+                    // 원래 멈춰있었다면 UI 시간만 업데이트
+                    updateProgressBar(audio, activePlayer);
+                }
+            }
+            
+            // 이벤트 리스너 정리
+            document.removeEventListener('mousemove', handleSeekMove);
+            document.removeEventListener('mouseup', handleSeekEnd);
+            document.removeEventListener('touchmove', handleSeekMove);
+            document.removeEventListener('touchend', handleSeekEnd);
+            activePlayer = null;
+        }
 
-    document.addEventListener('touchstart', wakeUpAudioContext, { once: true });
-    document.addEventListener('click', wakeUpAudioContext, { once: true });
-</script>
+        // 8. 오디오 컨텍스트 활성화 (iOS/Safari)
+        function wakeUpAudioContext() {
+            const allAudio = document.querySelectorAll('audio');
+            let playedSuccessfully = false;
+            
+            allAudio.forEach(audio => {
+                if (audio.paused) {
+                     // play 시도 (대부분 실패해도 AudioContext는 활성화됨)
+                    audio.play().then(() => {
+                        audio.pause(); // 성공하면 바로 멈춤
+                        playedSuccessfully = true;
+                    }).catch(error => {
+                        // console.warn(`Audio ${audio.id} context activation attempted.`, error.message);
+                    });
+                }
+            });
+            
+            // 한 번이라도 성공했거나, 시도를 마쳤다면 리스너 제거
+            // iOS는 첫 상호작용 후 1회에 한해 AudioContext를 활성화 시키므로, 리스너를 제거해야 중복 실행을 막고 성능을 유지할 수 있습니다.
+            if (playedSuccessfully) {
+                 document.removeEventListener('touchstart', wakeUpAudioContext);
+                 document.removeEventListener('click', wakeUpAudioContext);
+            }
+        }
+
+
+        // 페이지 로드 후 모든 리스너 연결
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.progress-bar-container').forEach(container => {
+                container.addEventListener('mousedown', handleSeekStart);
+                container.addEventListener('touchstart', handleSeekStart, { passive: false });
+            });
+            
+            // 문서 전체에 클릭/터치 리스너 연결 (플레이어 외부 클릭 감지)
+            document.addEventListener('click', handleOutsideClick); 
+            document.addEventListener('touchend', handleOutsideClick); 
+        });
+
+        // 문서 로드 후, 첫 터치(모바일) 또는 클릭(PC)에 리스너를 붙여 오디오 컨텍스트를 깨웁니다.
+        // ⭐️ click 이벤트 추가 (iOS에서 터치뿐만 아니라 클릭 상호작용도 허용)
+        document.addEventListener('touchstart', wakeUpAudioContext, { once: true });
+        document.addEventListener('click', wakeUpAudioContext, { once: true });
+    </script>
 </body>
 </html>
