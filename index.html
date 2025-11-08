@@ -161,27 +161,33 @@
         }
 
 
-        /* 재생/일시정지 버튼 스타일 */
-        .play-pause-btn {
-            width: 30px;
-            height: 30px;
-            min-width: 30px;
-            background-color: transparent; 
-            border-radius: 0; 
-            color: white; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2em;
-            cursor: pointer;
-            margin-right: 10px;
-            user-select: none; 
-        }
-        .play-pause-btn.playing {
-            font-size: 1.0em;
-            letter-spacing: -2px; 
-            padding-left: 1px; 
-        }
+/* 재생/일시정지 버튼 스타일 */
+.play-pause-btn {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    background-color: transparent; 
+    border-radius: 0; 
+    color: white; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    cursor: pointer;
+    margin-right: 10px;
+    user-select: none; 
+
+    /* ⭐️⭐️⭐️ 추가된 부분: 폰트 렌더링 통일 ⭐️⭐️⭐️ */
+    font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    font-style: normal;
+}
+.play-pause-btn.playing {
+    font-size: 1.0em;
+    letter-spacing: -2px; 
+    padding-left: 1px; 
+}
         
         /* 진행 바와 시간 표시를 감싸는 래퍼 */
         .controls-wrapper {
