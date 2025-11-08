@@ -1123,8 +1123,7 @@
         const progressFill = playerElement.querySelector('.progress-fill');
         
         // ⭐️ iOS FIX: duration이 없거나 0일 경우 로딩 대기 상태로 표시될 수 있도록 처리
-        // loadedmetadata 이벤트가 발생하면 duration이 업데이트됩니다.
-        if (duration === 0) {
+        if (duration === 0 || duration === Infinity) {
             timeDisplay.textContent = '00:00 / 00:00'; // 초기 상태 유지
             progressFill.style.width = '0%';
             return;
@@ -1153,7 +1152,10 @@
         
         // 플레이어 요소를 원래의 TD로 복원
         if (activePlayer && originalParentTd) {
-             originalParentTd.appendChild(activePlayer);
+             // activePlayer가 originalParentTd의 자식이 아니거나(이미 복원된 경우) 또는 이미 삭제된 상태가 아니라면 복원 시도
+             if (!originalParentTd.contains(activePlayer)) {
+                 originalParentTd.appendChild(activePlayer);
+             }
         }
 
         if (injectedPlayerRow) {
@@ -1194,15 +1196,13 @@
                 updateTimeDisplay(audio, playerElement);
             }
         };
+        // 리스너가 중복되지 않도록 제거 후 추가
         audio.removeEventListener('timeupdate', timeUpdateHandler);
         audio.addEventListener('timeupdate', timeUpdateHandler);
 
-        // ⭐️ iOS Fix: loadedmetadata 발생 시 시간 표시 업데이트 (duration 읽어오기)
-        const loadedMetadataHandler = () => {
-            updateTimeDisplay(audio, playerElement);
-        };
-        audio.removeEventListener('loadedmetadata', loadedMetadataHandler);
-        audio.addEventListener('loadedmetadata', loadedMetadataHandler);
+        // ⭐️ loadedmetadata: 오디오 메타데이터 로드 시 (duration) 시간 표시 업데이트
+        // 이 리스너는 모든 오디오에 대해 한 번만 붙습니다 (아래 setupAllAudioListeners 참조).
+        // 여기서 다시 붙일 필요는 없습니다.
 
         // ended: 오디오 종료 시 플레이어 닫기
         const endedHandler = () => {
@@ -1216,20 +1216,17 @@
         // error: 오류 발생 시 처리
         const errorHandler = (e) => {
             console.error(`Audio Error for ${audio.id}:`, e);
-            playerElement.querySelector('.time-display').textContent = 'Error';
+            const timeDisplay = playerElement.querySelector('.time-display');
+            if (timeDisplay) timeDisplay.textContent = 'Load Error';
+            
+            // 오류 발생 시 UI를 닫고 상태를 초기화합니다.
             resetAudioState(audio, true); 
             closePlayerUI(audio.id);
         };
         audio.removeEventListener('error', errorHandler);
         audio.addEventListener('error', errorHandler);
-        
-        // ⭐️ iOS Load Fix: 오디오가 준비되지 않았다면, 리스너를 붙인 후 로드를 시도합니다.
-        // 이는 iOS/Safari에서 duration을 읽어오기 위해 사용자 제스처 내에서 필요합니다.
-        if (audio.readyState < 1) { 
-            audio.load();
-        }
     }
-
+    
     // 6. 오디오 켜기/끄기 (🔊 아이콘 클릭 핸들러)
     function toggleCustomAudio(event, audioId, boxElement) {
         event.stopPropagation();
@@ -1238,10 +1235,12 @@
         
         // A. 토글/교체 로직 (이전 오디오 정리)
         if (currentlyActiveAudio && currentlyActiveAudio.id === audioId) {
+            // 같은 오디오를 다시 클릭한 경우: 일시 정지 및 UI 닫기
             resetAudioState(audioToActivate, false); 
             closePlayerUI(audioId);
             return; 
         } else if (currentlyActiveAudio) {
+            // 다른 오디오를 클릭한 경우: 이전 오디오 정리
             const previousAudioId = currentlyActiveAudio.id;
             resetAudioState(currentlyActiveAudio, true); 
             closePlayerUI(previousAudioId);
@@ -1283,17 +1282,28 @@
         newCell.appendChild(activePlayerUI);
         newRow.appendChild(newCell);
         
+        // 클릭된 행 바로 아래에 새 행 삽입
         clickedRow.parentNode.insertBefore(newRow, clickedRow.nextSibling);
         injectedPlayerRow = newRow;
 
+        // 🔊 버튼 숨기기
         boxElement.classList.add('hidden');
         originalAudioBox = boxElement;
 
         currentlyActiveAudio = audioToActivate;
-        attachAudioListeners(audioToActivate, activePlayerUI); // ⭐️ 여기서 iOS load()가 호출됩니다.
+        
+        // 필수적인 오디오 리스너 부착
+        attachAudioListeners(audioToActivate, activePlayerUI); 
 
         // ⭐️ 재생 시도 로직 통일: duration이 로드되지 않았더라도 일단 UI 업데이트 후 재생 시도
         updateTimeDisplay(audioToActivate, activePlayerUI);
+        
+        // play()를 호출하기 전에 duration이 로드되어 있는지 확인하고, 아니면 로드를 시도합니다.
+        // 이는 iOS에서 메타데이터를 로드하기 위한 사용자 제스처가 필요할 수 있기 때문입니다.
+        if (isNaN(audioToActivate.duration) || audioToActivate.duration === 0 || audioToActivate.duration === Infinity) {
+             audioToActivate.load();
+        }
+        
         playPauseAudio(null, audioToActivate.id, activePlayerUI); 
     }
 
@@ -1304,6 +1314,8 @@
         }
         const audio = document.getElementById(audioId);
         const btn = playerElement.querySelector('.play-pause-btn');
+        
+        if (!audio) return;
 
         if (audio.paused) {
             // ⭐️ iOS 재생 정책 대응: play()는 Promise를 반환하며 에러를 처리해야 합니다.
@@ -1313,8 +1325,18 @@
                 btn.dataset.state = 'playing';
                 currentlyActiveAudio = audio; 
             }).catch(error => {
-                console.error("Playback failed (iOS may require metadata or user interaction):", error);
-                // 재생 실패 시 UI는 일시 정지 상태로 유지
+                // 재생 실패 시 (예: 로드 지연 또는 정책 위반)
+                console.error("Playback failed:", error);
+                
+                // UI를 '일시정지' 상태로 유지
+                btn.textContent = '▶';
+                btn.classList.remove('playing');
+                btn.dataset.state = 'paused';
+                
+                // 오디오 상태 확인 후 에러 메시지 업데이트
+                if (audio.error) {
+                    playerElement.querySelector('.time-display').textContent = 'Play Error';
+                }
             });
         } else {
             audio.pause();
@@ -1338,7 +1360,7 @@
         
         const clientX = touch ? touch.clientX : event.clientX; 
 
-        if (clientX === undefined) {
+        if (clientX === undefined || isNaN(audio.duration) || audio.duration === 0 || audio.duration === Infinity) {
             return calculatedSeekTime; 
         }
 
@@ -1368,6 +1390,9 @@
 
         const audio = currentlyActiveAudio;
         const progressBarContainer = event.currentTarget;
+        
+        // duration이 유효하지 않으면 탐색을 시도하지 않습니다.
+        if (isNaN(audio.duration) || audio.duration === 0 || audio.duration === Infinity) return;
 
         const seekTime = setSeekTime(event, progressBarContainer, audio); 
         
@@ -1464,6 +1489,7 @@
         let isInsidePlayer = false;
 
         while (target && target !== document.body) {
+            // injectedPlayerRow에 포함되거나, 🔊 아이콘을 클릭한 경우
             if ((injectedPlayerRow && injectedPlayerRow.contains(target)) || (target.classList && target.classList.contains('audio-box'))) {
                 isInsidePlayer = true;
                 break;
@@ -1473,44 +1499,50 @@
 
         if (!isInsidePlayer && currentlyActiveAudio) {
             const currentAudioId = currentlyActiveAudio.id;
-            resetAudioState(currentlyActiveAudio, false); // 시간 유지, 일시정지
+            // 시간 유지, 일시정지
+            currentlyActiveAudio.pause();
             closePlayerUI(currentAudioId); // UI만 닫기 (🔊 복원)
         }
     }
     
-    // 10. 오디오 컨텍스트 활성화 (iOS/Safari 자동 재생 정책 대응)
-    function wakeUpAudioContext() {
+    // 10. 모든 오디오에 대해 loadedmetadata 리스너를 한 번만 붙이는 함수
+    function setupAllAudioListeners() {
         const allAudio = document.querySelectorAll('audio');
-        let playedSuccessfully = false;
-
         allAudio.forEach(audio => {
-            if (audio.readyState < 1 || isNaN(audio.duration) || audio.paused || audio.currentTime === 0) {
-                audio.load(); 
-                audio.play().then(() => {
-                    audio.pause(); 
-                    playedSuccessfully = true;
-                }).catch(error => {
-                    // 오디오 컨텍스트 활성화 시도 실패 (일반적)
-                });
-            }
+            // ⭐️ iOS/Safari에서 duration을 안정적으로 가져오기 위해 loadedmetadata 이벤트 사용
+            const loadedMetadataHandler = () => {
+                // duration이 로드되면 현재 시간을 업데이트합니다.
+                const playerElement = document.querySelector(`.custom-audio-player[data-audio-id="${audio.id}"]`);
+                if (playerElement) {
+                     updateTimeDisplay(audio, playerElement);
+                }
+            };
+            // 중복 방지
+            audio.removeEventListener('loadedmetadata', loadedMetadataHandler);
+            audio.addEventListener('loadedmetadata', loadedMetadataHandler);
+            
+            // 미리 로드를 시도하여 메타데이터를 가져옵니다. 
+            // 이는 iOS에서 초기 duration 로드에 도움이 될 수 있습니다.
+            audio.load();
         });
-        
-        if (playedSuccessfully) {
-             document.removeEventListener('touchstart', wakeUpAudioContext);
-             document.removeEventListener('click', wakeUpAudioContext);
-        }
     }
 
-
-    // 페이지 로드 후 모든 리스너 연결
+    // 문서 로드 후 모든 리스너 연결
     document.addEventListener('DOMContentLoaded', () => {
+        setupAllAudioListeners(); // 모든 오디오의 메타데이터 로드 준비
         document.addEventListener('click', handleOutsideClick); 
         document.addEventListener('touchend', handleOutsideClick); 
+        
+        // 최초 로드 시 모든 플레이어 UI의 시간을 업데이트 (duration이 0/Infinity 일 수 있음)
+        const allPlayers = document.querySelectorAll('.custom-audio-player');
+        allPlayers.forEach(player => {
+            const audioId = player.dataset.audioId;
+            const audio = document.getElementById(audioId);
+            if (audio) {
+                updateTimeDisplay(audio, player);
+            }
+        });
     });
-
-    // 문서 로드 후, 첫 터치(모바일) 또는 클릭(PC)에 리스너를 붙여 오디오 컨텍스트를 깨웁니다.
-    document.addEventListener('touchstart', wakeUpAudioContext, { once: true });
-    document.addEventListener('click', wakeUpAudioContext, { once: true });
 </script>
 </body>
 </html>
